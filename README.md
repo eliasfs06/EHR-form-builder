@@ -71,9 +71,8 @@ On submit (e.g., `POST /form-submissions`), the backend:
 
 ```
 .
-├─ docs/
-│  └─ er-ehr-forms.puml       # PlantUML diagram
-│  └─ er-ehr-forms.png       # PNG print diagram
+├─ er-ehr-forms.puml       # PlantUML diagram
+├─ er-ehr-forms.png       # PNG print diagram
 └─ README.md
 ```
 
