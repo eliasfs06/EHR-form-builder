@@ -1,0 +1,199 @@
+@startuml
+skinparam classAttributeIconSize 0
+hide circle
+
+class User {
+  +Long id
+  +String name
+  +String email
+  +UserRole role
+  +Instant createdAt
+  +Instant updatedAt
+}
+
+class Patient {
+  +Long id
+  +String fullName
+  +LocalDate birthDate
+  +String documentId
+  +String sex
+  +Instant createdAt
+  +Instant updatedAt
+}
+
+class Specialty {
+  +Long id
+  +String name
+  +String code
+  +Instant createdAt
+  +Instant updatedAt
+}
+
+class Appointment {
+  +Long id
+  +Instant startAt
+  +Instant endAt
+  +EncounterStatus status
+  +String notes
+  +Instant createdAt
+  +Instant updatedAt
+}
+
+class FormTemplate {
+  +Long id
+  +String name
+  +String description
+  +Boolean active
+  +Instant createdAt
+  +Instant updatedAt
+}
+
+class FormVersion {
+  +Long id
+  +Integer version
+  +Boolean published
+  +Instant publishedAt
+  +Instant createdAt
+}
+
+class FormSection {
+  +Long id
+  +String title
+  +String description
+  +Integer displayOrder
+}
+
+class FormField {
+  +Long id
+  +String code
+  +String label
+  +String helpText
+  +Boolean required
+  +Integer displayOrder
+  +FieldType type
+  +String constraintsJson
+}
+
+class OptionItem {
+  +Long id
+  +String value
+  +String label
+  +Integer displayOrder
+}
+
+class ConditionalRule {
+  +Long id
+  +ConditionAction action
+  +String expression
+  +Integer priority
+}
+
+class FormSubmission {
+  +Long id
+  +Instant submittedAt
+  +SubmissionStatus status
+}
+
+class Register {
+  {abstract}
+  +Long id
+}
+
+class TextRegister {
+  +String value
+}
+class NumberRegister {
+  +BigDecimal value
+}
+class DateRegister {
+  +LocalDate value
+}
+class BooleanRegister {
+  +Boolean value
+}
+class OptionRegister {
+  +String optionValue
+  +String optionLabel
+}
+class MultiOptionRegister {
+  +List~String~ optionValues
+  +List~String~ optionLabels
+}
+class FileRegister {
+  +List~Long~ attachmentIds
+}
+
+class Attachment {
+  +Long id
+  +String filename
+  +String contentType
+  +Long sizeBytes
+  +String storageKey
+  +Instant uploadedAt
+}
+
+enum UserRole {
+  ADMIN
+  CLINICIAN
+  RECEPTION
+  AUDITOR
+}
+
+enum EncounterStatus {
+  SCHEDULED
+  IN_PROGRESS
+  COMPLETED
+  CANCELLED
+}
+
+enum SubmissionStatus {
+  DRAFT
+  SUBMITTED
+  CORRECTED
+}
+
+enum FieldType {
+  TEXT
+  TEXTAREA
+  NUMBER
+  DATE
+  TIME
+  BOOLEAN
+  RADIO
+  SELECT
+  MULTISELECT
+  FILE
+  TITLE
+  PARAGRAPH
+}
+
+enum ConditionAction {
+  SHOW
+  HIDE
+  ENABLE
+  DISABLE
+}
+
+Specialty "1" o-- "0..*" FormTemplate
+FormTemplate "1" o-- "1..*" FormVersion
+FormVersion "1" *-- "1..*" FormSection
+FormSection "1" *-- "1..*" FormField
+FormField "1" o-- "0..*" OptionItem
+FormField "0..*" o-- "0..*" ConditionalRule
+Patient "1" o-- "0..*" Appointment
+User "1" --> "0..*" Appointment : clinician
+Specialty "1" --> "0..*" Appointment : specialty
+Appointment "1" --> "0..1" FormSubmission
+FormVersion "1" --> "0..*" FormSubmission
+User "1" --> "0..*" FormSubmission : submittedBy
+FormSubmission "1" *-- "0..*" Register
+Register <|-- TextRegister
+Register <|-- NumberRegister
+Register <|-- DateRegister
+Register <|-- BooleanRegister
+Register <|-- OptionRegister
+Register <|-- MultiOptionRegister
+Register <|-- FileRegister
+Register "0..*" --> "1" FormField : field
+FileRegister "1" --> "0..*" Attachment : uses
+@enduml
